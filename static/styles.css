@@ -1,0 +1,145 @@
+/* Основные стили */
+body {
+    font-family: Arial, sans-serif;
+    background: url("/static/background.jpg") no-repeat center center fixed;
+    background-size: cover;
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h3 {
+    text-align: center;
+    color: black;
+}
+
+/* Кнопка "Автор" */
+#author-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 8px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+#author-button:hover {
+    background: #0056b3;
+}
+
+/* Контейнер для всей страницы */
+.container {
+    width: 95%; /* Было 90%, теперь больше */
+    max-width: 1400px; /* Было 1200px, увеличил */
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Немного увеличил расстояние между столбцами */
+}
+
+/* Общие стили для колонок */
+.column {
+    flex: 1.2; /* Было 1, теперь столбцы шире */
+    padding: 20px; /* Увеличил отступ внутри столбцов */
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+    text-align: center;
+    color: black;
+}
+
+/* Выбранные артефакты */
+.chosen-artifacts-box ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.artifact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition: border-color 0.2s, background 0.2s;
+    color: black;
+}
+
+.artifact-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: white;
+}
+
+/* Крестик удаления артефакта */
+.remove-btn {
+    color: red;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+/* Выбор тира */
+.tier-option {
+    padding: 5px;
+    margin: 5px;
+    background: lightgray;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+    color: black;
+}
+
+.tier-option:hover {
+    background: darkgray;
+}
+
+/* Отображение характеристик */
+#artifact-stats p {
+    margin: 5px 0;
+    color: black;
+}
+
+/* Блок итоговых характеристик */
+.results {
+    text-align: left;
+}
+
+.results h3 {
+    text-align: center;
+}
+
+#calculation-result p {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px;
+    border-radius: 5px;
+    color: black;
+}
+
+/* Адаптивность */
+max-width: 1024px {
+    .container {
+        flex-wrap: wrap;
+    }
+
+    .column {
+        width: 48%;
+        margin-bottom: 20px;
+    }
+}
+
+max-width: 768px {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .column {
+        width: 100%;
+    }
+}

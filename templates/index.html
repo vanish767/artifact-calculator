@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Калькулятор Артефактов</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+
+    <!-- Кнопка "Автор" в правом верхнем углу -->
+    <a href="https://vk.com/est_sho" target="_blank" id="author-button">Автор</a>
+
+    <h1>Калькулятор Артефактов</h1>
+    <div class="container">
+        <!-- Выбор артефакта -->
+        <div class="column artifact-selection">
+            <h3>Выбор артефакта</h3>
+            <select id="artifact-select">
+                <option value="">Выберите артефакт</option>
+                {% for artifact in artifacts %}
+                <option value="{{ artifact['Имя'] }}">{{ artifact['Имя'] }}</option>
+                {% endfor %}
+            </select>
+            <button id="confirm-artifact" disabled>Выбрать артефакт</button>
+        </div>
+
+        <!-- Выбранные артефакты -->
+        <div class="column chosen-artifacts-box">
+            <h3>Выбранные артефакты:</h3>
+            <ul id="selected-artifacts" class="selected-artifacts-list"></ul>
+        </div>
+
+        <!-- Выбор тира и характеристики -->
+        <div class="column artifact-details">
+            <h3 id="artifact-name">Выберите артефакт из списка</h3>
+            <div id="tier-selection">Здесь появится выбор тира...</div>
+            <div id="artifact-stats">Характеристики появятся после выбора тира...</div>
+        </div>
+
+        <!-- Итоговые характеристики -->
+        <div class="column results">
+            <h3>Результаты:</h3>
+            <div id="calculation-result">Здесь появятся результаты...</div>
+        </div>
+    </div>
+
+</body>
+</html>
