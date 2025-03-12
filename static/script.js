@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
     let selectedArtifacts = [];
-    let selectedArtifactData = null;
 
     const artifactSelect = document.getElementById("artifact-select");
     const confirmButton = document.getElementById("confirm-artifact");
@@ -9,14 +8,37 @@ document.addEventListener("DOMContentLoaded", function () {
     const tierSelectionDiv = document.getElementById("tier-selection");
     const resultDiv = document.getElementById("calculation-result");
     const selectedArtifactsList = document.getElementById("selected-artifacts");
+    const clearButton = document.getElementById("clear-build");
 
     let allArtifacts = [];
+
+    // Подсказки для результатов
+    const tooltips = {
+        "Вывод рад": "Выводимая радиация из организма – должна всегда превышать накопление радиации.",
+        "Накопление рад": "Накапливаемая радиация в организме – этот показатель не должен падать, иначе артефакт будет постоянно вводить радиацию.",
+        "Защита от ударов": "Если '+' – повышает защиту от ударов у персонажа.",
+        "Защита от аномалий": "Если '+' – уменьшает урон от аномалий.",
+        "Защита от пуль": "Если '+' – уменьшает урон от пуль.",
+        "Температура": "Держите около 0. Если положительная – персонаж перегревается; если отрицательная – переохлаждается.",
+        "Кровь": "Всегда должна быть в '+', иначе персонаж будет терять кровь.",
+        "Выносливость": "Если '-' – игрок теряет % выносливости, если '+' – восстанавливает.",
+        "Стойкость": "Уровень шока – должен быть 0 или '+', иначе возможны проблемы с сознанием.",
+        "Здоровье": "Влияет на восстановление здоровья до максимума; рекомендуется 0 или '+'.",
+        "Вода": "Положительное значение утоляет жажду.",
+        "Еда": "Положительное значение утоляет голод.",
+        "Шанс порез": "При тике даёт шанс на порез персонажу.",
+        "Лечение порез": "Затягивает порезы – чем больше значение, тем эффективнее.",
+        "Шанс перелома": "Дает шанс на перелом ног персонажу.",
+        "Лечение перелома": "Лечит переломы.",
+        "Высота прыжок": "Прибавляет высоту прыжка, если '+'."  
+    };
 
     // Загрузка артефактов
     fetch("/get_artifacts")
         .then(response => response.json())
         .then(data => {
             allArtifacts = data;
+            console.log("✅ Загруженные артефакты:", allArtifacts);
 
             artifactSelect.addEventListener("change", function () {
                 confirmButton.disabled = artifactSelect.value === "";
@@ -31,34 +53,62 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("❌ Ошибка загрузки артефактов:", error));
 
+    // Очистка сборки
+    clearButton.addEventListener("click", function () {
+        selectedArtifacts = [];
+        updateSelectedList();
+        artifactNameHeader.innerHTML = "Выберите артефакт из списка";
+        tierSelectionDiv.innerHTML = "Здесь появится выбор тира...";
+        statsDiv.innerHTML = "Характеристики появятся после выбора тира...";
+    });
+
     // Добавление артефакта в список (разрешает дубликаты)
     function addArtifact(name) {
-        const artifactId = Date.now() + Math.random(); // Генерируем уникальный ID
-        selectedArtifacts.push({ id: artifactId, "Имя": name, "Тир": null });
+        const artifactId = Date.now() + Math.random();
+        selectedArtifacts.push({ id: artifactId, name: name, tier: null });
+        updateSelectedList();
+    }
+
+    // Копирование артефакта
+    function copyArtifact(originalArtifact) {
+        if (!originalArtifact.tier) {
+            console.log("⚠️ Нельзя копировать артефакт без выбранного тира.");
+            return;
+        }
+        const copiedArtifact = {
+            id: Date.now() + Math.random(),
+            name: originalArtifact.name,
+            tier: originalArtifact.tier
+        };
+        selectedArtifacts.push(copiedArtifact);
         updateSelectedList();
     }
 
     // Обновление списка выбранных артефактов
     function updateSelectedList() {
         selectedArtifactsList.innerHTML = "";
-        selectedArtifacts.forEach((artifact, index) => {
+        selectedArtifacts.forEach((artifact) => {
             let listItem = document.createElement("li");
             listItem.classList.add("artifact-item");
 
-            let artifactText = document.createElement("span");
-            artifactText.textContent = `${artifact["Имя"]} (${artifact["Тир"] ? "Тир " + artifact["Тир"] : "Выберите тир"})`;
-            artifactText.classList.add("clickable");
-
-            // Одиночный клик — показать выбор тира
-            artifactText.onclick = function () {
+            let artifactContainer = document.createElement("div");
+            artifactContainer.classList.add("artifact-container");
+            artifactContainer.onclick = function () {
                 showTierSelection(artifact);
             };
 
-            // Крестик для удаления артефакта
+            let artifactText = document.createElement("span");
+            artifactText.innerHTML = `${artifact.name} (${artifact.tier ? "Тир " + artifact.tier : "Выберите тир"})`;
+            artifactText.classList.add("clickable");
+
+            let buttonContainer = document.createElement("div");
+            buttonContainer.classList.add("button-container");
+
             let removeButton = document.createElement("span");
-            removeButton.textContent = " ✖️";
+            removeButton.textContent = "✖️";
             removeButton.classList.add("remove-btn");
-            removeButton.onclick = function () {
+            removeButton.onclick = function (event) {
+                event.stopPropagation();
                 selectedArtifacts = selectedArtifacts.filter(a => a.id !== artifact.id);
                 updateSelectedList();
                 artifactNameHeader.innerHTML = "Выберите артефакт из списка";
@@ -67,64 +117,188 @@ document.addEventListener("DOMContentLoaded", function () {
                 calculateStats();
             };
 
-            listItem.appendChild(artifactText);
-            listItem.appendChild(removeButton);
+            let copyButton = document.createElement("span");
+            copyButton.textContent = "📄";
+            copyButton.classList.add("copy-btn");
+            copyButton.onclick = function (event) {
+                event.stopPropagation();
+                copyArtifact(artifact);
+            };
+
+            buttonContainer.appendChild(removeButton);
+            buttonContainer.appendChild(copyButton);
+
+            artifactContainer.appendChild(artifactText);
+            listItem.appendChild(artifactContainer);
+            listItem.appendChild(buttonContainer);
             selectedArtifactsList.appendChild(listItem);
         });
 
-        calculateStats(); // Автоматический пересчёт характеристик
+        calculateStats();
     }
 
     // Отображение тиров и характеристик
     function showTierSelection(artifact) {
-        let artifactData = allArtifacts.find(a => a["Имя"] === artifact["Имя"]);
+        let artifactData = allArtifacts.find(a => a["Имя"] === artifact.name);
         if (!artifactData) return;
 
-        artifactNameHeader.innerHTML = artifact["Имя"];
+        artifactNameHeader.innerHTML = artifact.name;
         tierSelectionDiv.innerHTML = `<h4>Выберите тир:</h4>`;
+        statsDiv.innerHTML = "Характеристики появятся после выбора тира...";
 
         artifactData["Варианты"].forEach(variant => {
             let tierDiv = document.createElement("div");
             tierDiv.classList.add("tier-option");
             tierDiv.innerHTML = `Тир ${variant["Тир"]}`;
 
+            // Подсветка выбранного тира зелёным
+            if (artifact.tier === variant["Тир"]) {
+                tierDiv.style.backgroundColor = "lightgreen";
+            }
+
             tierDiv.addEventListener("click", function () {
-                artifact["Тир"] = variant["Тир"];
+                artifact.tier = variant["Тир"];
                 showArtifactStats(variant);
                 updateSelectedList();
             });
 
             tierSelectionDiv.appendChild(tierDiv);
+
+            // Если тир уже выбран, сразу показать характеристики
+            if (artifact.tier === variant["Тир"]) {
+                showArtifactStats(variant);
+            }
         });
     }
 
-    // Отображение характеристик выбранного тира
+    // Отображение характеристик выбранного тира с кастомными tooltip
     function showArtifactStats(variant) {
         statsDiv.innerHTML = "<h4>Характеристики:</h4>";
         for (let key in variant) {
             if (key !== "Имя" && key !== "Тир" && variant[key] !== null) {
-                statsDiv.innerHTML += `<p>${key}: ${variant[key]}</p>`;
+                let p = document.createElement("p");
+                p.textContent = `${key}: ${variant[key]}`;
+                if (tooltips[key]) {
+                    // Создаем элемент tooltip
+                    let tooltipSpan = document.createElement("span");
+                    tooltipSpan.classList.add("tooltip");
+
+                    // Иконка-триггер
+                    let icon = document.createElement("span");
+                    icon.classList.add("tooltip-icon");
+                    icon.textContent = "?";
+
+                    // Сам текст tooltip
+                    let tooltipText = document.createElement("span");
+                    tooltipText.classList.add("tooltiptext");
+                    tooltipText.textContent = tooltips[key];
+
+                    tooltipSpan.appendChild(icon);
+                    tooltipSpan.appendChild(tooltipText);
+
+                    p.appendChild(tooltipSpan);
+                }
+                statsDiv.appendChild(p);
             }
         }
     }
 
     // Автоматический расчёт характеристик
     function calculateStats() {
+        if (selectedArtifacts.length === 0) {
+            console.log("⚠️ Нет артефактов для расчёта, запрос не отправляется.");
+            resultDiv.innerHTML = "<h3>Результаты:</h3><p>Выберите артефакты для расчёта.</p>";
+            return;
+        }
+
+        console.log("📌 Отправляем данные на сервер:", JSON.stringify({ artifacts: selectedArtifacts }));
+
         fetch("/calculate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "artifacts": selectedArtifacts })
+            body: JSON.stringify({ artifacts: selectedArtifacts })
         })
-        .then(response => response.json())
-        .then(data => displayResults(data))
-        .catch(error => console.error("❌ Ошибка при расчёте:", error));
+        .then(response => {
+            console.log("📌 Ответ сервера (статус):", response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log("✅ Ответ сервера:", data);
+            displayResults(data);
+        })
+        .catch(error => console.error("❌ Ошибка запроса:", error));
     }
 
-    // Вывод результатов
+    // Вывод результатов с приоритетным порядком и окраской по условиям
     function displayResults(stats) {
         resultDiv.innerHTML = "<h3>Результаты:</h3>";
-        for (let stat in stats) {
-            resultDiv.innerHTML += `<p>${stat}: ${stats[stat]}</p>`;
+
+        const priorityOrder = ["Вывод рад", "Накопление рад"];
+        let sortedStats = {};
+
+        // Добавляем приоритетные свойства первыми
+        priorityOrder.forEach(prop => {
+            if (stats.hasOwnProperty(prop)) {
+                sortedStats[prop] = stats[prop];
+            }
+        });
+
+        // Добавляем остальные свойства в алфавитном порядке
+        Object.keys(stats)
+            .filter(key => !priorityOrder.includes(key))
+            .sort()
+            .forEach(key => {
+                sortedStats[key] = stats[key];
+            });
+
+        // Отображаем результаты с окраской
+        for (let key in sortedStats) {
+            let value = sortedStats[key];
+            let color = "black";
+
+            if (value === 0) {
+                color = "gray";
+            } else {
+                if (key === "Температура") {
+                    if (value < 0) {
+                        color = "blue";
+                    } else if (value > 0) {
+                        color = "red";
+                    } else {
+                        color = "green";
+                    }
+                } else if (key === "Шанс порез" || key === "Шанс перелома" || key === "Накопление рад") {
+                    color = "red";
+                } else {
+                    color = value > 0 ? "green" : "red";
+                }
+            }
+
+            if (key.startsWith("Стойкость")) {
+                key = key.replace(" (не падать)", "");
+            }
+
+            let p = document.createElement("p");
+            p.style.color = color;
+            p.textContent = `${key}: ${value}`;
+            // Добавляем tooltip для результатов, если описание задано
+            if (tooltips[key]) {
+                let tooltipSpan = document.createElement("span");
+                tooltipSpan.classList.add("tooltip");
+
+                let icon = document.createElement("span");
+                icon.classList.add("tooltip-icon");
+                icon.textContent = "?";
+
+                let tooltipText = document.createElement("span");
+                tooltipText.classList.add("tooltiptext");
+                tooltipText.textContent = tooltips[key];
+
+                tooltipSpan.appendChild(icon);
+                tooltipSpan.appendChild(tooltipText);
+                p.appendChild(tooltipSpan);
+            }
+            resultDiv.appendChild(p);
         }
     }
 });

@@ -19,7 +19,11 @@
             <select id="artifact-select">
                 <option value="">Выберите артефакт</option>
                 {% for artifact in artifacts %}
-                <option value="{{ artifact['Имя'] }}">{{ artifact['Имя'] }}</option>
+                    {% set variant = artifact['Варианты'][0] %}
+                    <option value="{{ artifact['Имя'] }}"
+                        title="{% for key, value in variant.items() if key not in ['Имя', 'Тир'] %}{{ key }}: {{ value }}{% if not loop.last %}, {% endif %}{% endfor %}">
+                        {{ artifact['Имя'] }}
+                    </option>
                 {% endfor %}
             </select>
             <button id="confirm-artifact" disabled>Выбрать артефакт</button>
@@ -28,6 +32,7 @@
         <!-- Выбранные артефакты -->
         <div class="column chosen-artifacts-box">
             <h3>Выбранные артефакты:</h3>
+            <button id="clear-build">🗑️ Очистить сборку</button>
             <ul id="selected-artifacts" class="selected-artifacts-list"></ul>
         </div>
 

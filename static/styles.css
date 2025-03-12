@@ -33,18 +33,18 @@ h1, h3 {
 
 /* Контейнер для всей страницы */
 .container {
-    width: 95%; /* Было 90%, теперь больше */
-    max-width: 1400px; /* Было 1200px, увеличил */
+    width: 95%;
+    max-width: 1400px;
     margin: 20px auto;
     display: flex;
     justify-content: space-between;
-    gap: 20px; /* Немного увеличил расстояние между столбцами */
+    gap: 20px;
 }
 
 /* Общие стили для колонок */
 .column {
-    flex: 1.2; /* Было 1, теперь столбцы шире */
-    padding: 20px; /* Увеличил отступ внутри столбцов */
+    flex: 1.2;
+    padding: 20px;
     background: rgba(255, 255, 255, 0.6);
     border-radius: 5px;
     text-align: center;
@@ -68,11 +68,20 @@ h1, h3 {
     margin-bottom: 5px;
     transition: border-color 0.2s, background 0.2s;
     color: black;
+    position: relative;
 }
 
-.artifact-item:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: white;
+/* Контейнер для клика по артефакту */
+.artifact-container {
+    flex-grow: 1;
+}
+
+/* Контейнер для кнопок удаления и копирования (расположены вертикально) */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
 }
 
 /* Крестик удаления артефакта */
@@ -80,7 +89,38 @@ h1, h3 {
     color: red;
     cursor: pointer;
     font-size: 16px;
-    margin-left: 10px;
+    display: block;
+    text-align: center;
+}
+
+/* Кнопка копирования артефакта */
+.copy-btn {
+    color: green;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    text-align: center;
+}
+
+.copy-btn:hover {
+    color: darkgreen;
+}
+
+/* Кнопка очистки сборки */
+#clear-build {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background: #ff6347;
+    border: none;
+    color: white;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#clear-build:hover {
+    background: #ff4500;
 }
 
 /* Выбор тира */
@@ -121,8 +161,54 @@ h1, h3 {
     color: black;
 }
 
+/* Кастомные tooltip стили */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #f9f9f9;
+    color: #333;
+    text-align: left;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    font-size: 12px;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Кружочек с вопросительным знаком для tooltip */
+.tooltip-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-color: #e0e0e0; /* нежно-серый */
+    color: #666;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 18px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
 /* Адаптивность */
-max-width: 1024px {
+@media (max-width: 1024px) {
     .container {
         flex-wrap: wrap;
     }
@@ -133,7 +219,7 @@ max-width: 1024px {
     }
 }
 
-max-width: 768px {
+@media (max-width: 768px) {
     .container {
         flex-direction: column;
         align-items: center;

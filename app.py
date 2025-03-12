@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 import json
-import os  # Добавил для работы с переменными среды
+import os
 
 app = Flask(__name__)
 
@@ -15,7 +15,7 @@ def load_artifacts():
                 for key, value in variant.items():
                     if isinstance(value, str):
                         value = value.replace(',', '.')  # Меняем запятую на точку
-                        if value.replace('.', '').replace('-', '').isdigit():  
+                        if value.replace('.', '').replace('-', '').isdigit():
                             variant[key] = float(value) if '.' in value else int(value)
 
         return data
@@ -37,7 +37,7 @@ def get_artifacts():
 def calculate():
     try:
         data = request.json
-        print("📩 Полученные данные:", data)
+        print("📩 Полученные данные:", data)  # ✅ Логируем входные данные
 
         selected_artifacts = data.get("artifacts", [])
         if not selected_artifacts:
@@ -46,8 +46,8 @@ def calculate():
         result = {}
 
         for item in selected_artifacts:
-            artifact_name = item["Имя"]
-            tier = item["Тир"]
+            artifact_name = item["name"]
+            tier = item["tier"]
 
             for artifact in load_artifacts():
                 if artifact["Имя"] == artifact_name:
@@ -55,7 +55,20 @@ def calculate():
                         if variant["Тир"] == tier:
                             for key, value in variant.items():
                                 if key not in ["Имя", "Тир"] and value is not None:
-                                    result[key] = result.get(key, 0) + value  # Теперь все значения числа
+                                    try:
+                                        numeric_value = 0  # Значение по умолчанию
+                                        
+                                        if isinstance(value, (int, float)):  
+                                            numeric_value = value  # Если уже число, оставляем
+                                        elif isinstance(value, str):  
+                                            value = value.replace(',', '.')  # Меняем запятые на точки
+                                            if value.replace('.', '').replace('-', '').isdigit():  
+                                                numeric_value = float(value)  # Преобразуем в число
+                                        
+                                        result[key] = result.get(key, 0) + numeric_value  
+                                    except ValueError:
+                                        print(f"⚠️ Ошибка преобразования: {key} = {value}")
+                                        continue
 
         print("✅ Итоговые характеристики:", result)
         return jsonify(result)
@@ -64,7 +77,6 @@ def calculate():
         print("❌ Ошибка в /calculate:", str(e))
         return jsonify({"error": str(e)}), 500
 
-# Запуск приложения с поддержкой Render
-if __name__ == "__main__":
+if __name__ == "__main__":  # ✅ Исправлено (__name__ с двумя подчёркиваниями)
     port = int(os.environ.get("PORT", 10000))  # Render требует PORT из окружения
     app.run(host="0.0.0.0", port=port)
