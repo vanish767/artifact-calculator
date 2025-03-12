@@ -58,17 +58,18 @@ h1, h3 {
 }
 
 .artifact-item {
+    height: 30px; /* Уменьшенная высота */
+    width: 90%; /* Увеличенная ширина */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.5);
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 5px;
+    margin: 5px auto; /* Центрирование элемента */
     cursor: pointer;
-    margin-bottom: 5px;
-    transition: border-color 0.2s, background 0.2s;
-    color: black;
-    position: relative;
 }
 
 /* Контейнер для клика по артефакту */
