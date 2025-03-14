@@ -13,6 +13,12 @@
 
     <h1>Калькулятор Артефактов</h1>
     <div class="container">
+        <!-- Кнопки управления сборками (сохранить, загрузить, удалить) -->
+        <div class="controls" style="position: absolute; top: 10px; left: 10px;">
+            <button id="save-build">Сохранить сборку</button>
+            <button id="load-build">Загрузить сборку</button>
+        </div>
+
         <!-- Выбор артефакта -->
         <div class="column artifact-selection">
             <h3>Выбор артефакта</h3>
@@ -32,7 +38,8 @@
         <!-- Выбранные артефакты -->
         <div class="column chosen-artifacts-box">
             <h3>Выбранные артефакты:</h3>
-            <button id="clear-build">🗑️ Очистить сборку</button>
+            <button id="clear-build"> Очистить сборку</button>
+			<div id="artifact-count">Количество артефактов: 0</div>
             <ul id="selected-artifacts" class="selected-artifacts-list"></ul>
         </div>
 

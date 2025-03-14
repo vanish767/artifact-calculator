@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const tierSelectionDiv = document.getElementById("tier-selection");
     const resultDiv = document.getElementById("calculation-result");
     const selectedArtifactsList = document.getElementById("selected-artifacts");
+	const saveButton = document.getElementById("save-build");
+	const loadButton = document.getElementById("load-build");
     const clearButton = document.getElementById("clear-build");
 
     let allArtifacts = [];
@@ -52,7 +54,45 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         })
         .catch(error => console.error("❌ Ошибка загрузки артефактов:", error));
+		
+		// Очистка сборки
+    clearButton.addEventListener("click", function () {
+        selectedArtifacts = [];
+        updateSelectedList();
+        artifactNameHeader.innerHTML = "Выберите артефакт из списка";
+        tierSelectionDiv.innerHTML = "Здесь появится выбор тира...";
+        statsDiv.innerHTML = "Характеристики появятся после выбора тира...";
+        calculateStats();
+    });
 
+    // Сохранение сборки в localStorage
+    saveButton.addEventListener("click", function () {
+        if (selectedArtifacts.length > 0) {
+            localStorage.setItem("savedBuild", JSON.stringify(selectedArtifacts));
+            alert("Сборка сохранена!");
+        } else {
+            alert("Нет артефактов для сохранения.");
+        }
+    });
+
+    // Загрузка сборки из localStorage
+    loadButton.addEventListener("click", function () {
+        const savedBuild = localStorage.getItem("savedBuild");
+        if (savedBuild) {
+            selectedArtifacts = JSON.parse(savedBuild);
+            updateSelectedList();
+            alert("Сборка загружена!");
+        } else {
+            alert("Нет сохранённых сборок.");
+        }
+    });
+
+    // Удаление сборки из localStorage
+    deleteButton.addEventListener("click", function () {
+        localStorage.removeItem("savedBuild");
+        alert("Сборка удалена.");
+    });
+   
     // Очистка сборки
     clearButton.addEventListener("click", function () {
         selectedArtifacts = [];
