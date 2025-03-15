@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	const saveButton = document.getElementById("save-build");
 	const loadButton = document.getElementById("load-build");
     const clearButton = document.getElementById("clear-build");
+	const artifactCount = document.getElementById("artifact-count");
 
     let allArtifacts = [];
 
@@ -86,12 +87,6 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Нет сохранённых сборок.");
         }
     });
-
-    // Удаление сборки из localStorage
-    deleteButton.addEventListener("click", function () {
-        localStorage.removeItem("savedBuild");
-        alert("Сборка удалена.");
-    });
    
     // Очистка сборки
     clearButton.addEventListener("click", function () {
@@ -125,57 +120,77 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Обновление списка выбранных артефактов
-    function updateSelectedList() {
-        selectedArtifactsList.innerHTML = "";
-        selectedArtifacts.forEach((artifact) => {
-            let listItem = document.createElement("li");
-            listItem.classList.add("artifact-item");
-
-            let artifactContainer = document.createElement("div");
-            artifactContainer.classList.add("artifact-container");
-            artifactContainer.onclick = function () {
-                showTierSelection(artifact);
-            };
-
-            let artifactText = document.createElement("span");
-            artifactText.innerHTML = `${artifact.name} (${artifact.tier ? "Тир " + artifact.tier : "Выберите тир"})`;
-            artifactText.classList.add("clickable");
-
-            let buttonContainer = document.createElement("div");
-            buttonContainer.classList.add("button-container");
-
-            let removeButton = document.createElement("span");
-            removeButton.textContent = "✖️";
-            removeButton.classList.add("remove-btn");
-            removeButton.onclick = function (event) {
-                event.stopPropagation();
-                selectedArtifacts = selectedArtifacts.filter(a => a.id !== artifact.id);
-                updateSelectedList();
-                artifactNameHeader.innerHTML = "Выберите артефакт из списка";
-                tierSelectionDiv.innerHTML = "Здесь появится выбор тира...";
-                statsDiv.innerHTML = "Характеристики появятся после выбора тира...";
-                calculateStats();
-            };
-
-            let copyButton = document.createElement("span");
-            copyButton.textContent = "📄";
-            copyButton.classList.add("copy-btn");
-            copyButton.onclick = function (event) {
-                event.stopPropagation();
-                copyArtifact(artifact);
-            };
-
-            buttonContainer.appendChild(removeButton);
-            buttonContainer.appendChild(copyButton);
-
-            artifactContainer.appendChild(artifactText);
-            listItem.appendChild(artifactContainer);
-            listItem.appendChild(buttonContainer);
-            selectedArtifactsList.appendChild(listItem);
-        });
-
-        calculateStats();
+function updateSelectedList() {
+    if (!selectedArtifactsList) {
+        console.error("❌ Ошибка: элемент selectedArtifactsList не найден!");
+        return;
     }
+
+    selectedArtifactsList.innerHTML = "";
+
+    selectedArtifacts.forEach((artifact) => {
+        let listItem = document.createElement("li");
+        listItem.classList.add("artifact-item");
+
+        let artifactContainer = document.createElement("div");
+        artifactContainer.classList.add("artifact-container");
+        artifactContainer.onclick = function () {
+            showTierSelection(artifact);
+        };
+
+        let artifactText = document.createElement("span");
+        artifactText.innerHTML = `${artifact.name} (${artifact.tier ? "Тир " + artifact.tier : "Выберите тир"})`;
+        artifactText.classList.add("clickable");
+
+        let buttonContainer = document.createElement("div");
+        buttonContainer.classList.add("button-container");
+
+        // Кнопка удаления артефакта
+        let removeButton = document.createElement("span");
+        removeButton.textContent = "✖️";
+        removeButton.classList.add("remove-btn");
+        removeButton.onclick = function (event) {
+            event.stopPropagation();
+            selectedArtifacts = selectedArtifacts.filter(a => a.id !== artifact.id);
+            updateSelectedList();
+            artifactNameHeader.innerHTML = "Выберите артефакт из списка";
+            tierSelectionDiv.innerHTML = "Здесь появится выбор тира...";
+            statsDiv.innerHTML = "Характеристики появятся после выбора тира...";
+            calculateStats();
+        };
+
+        // Кнопка копирования артефакта
+        let copyButton = document.createElement("span");
+        copyButton.textContent = "📄";
+        copyButton.classList.add("copy-btn");
+        copyButton.onclick = function (event) {
+            event.stopPropagation();
+            if (typeof copyArtifact === "function") {
+                copyArtifact(artifact);
+            } else {
+                console.error("❌ Ошибка: copyArtifact() не найдена!");
+            }
+        };
+
+        buttonContainer.appendChild(removeButton);
+        buttonContainer.appendChild(copyButton);
+
+        artifactContainer.appendChild(artifactText);
+        listItem.appendChild(artifactContainer);
+        listItem.appendChild(buttonContainer);
+        selectedArtifactsList.appendChild(listItem);
+    });
+
+    // Обновление количества артефактов
+    const countElement = document.getElementById("artifact-count");
+    if (countElement) {
+        countElement.textContent = `Количество артефактов: ${selectedArtifacts.length}`;
+    } else {
+        console.warn("⚠️ Элемент #artifact-count не найден!");
+    }
+
+    calculateStats();
+}
 
     // Отображение тиров и характеристик
     function showTierSelection(artifact) {
