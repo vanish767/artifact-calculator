@@ -5,6 +5,16 @@
     <title>Калькулятор Артефактов</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WMR2ZZCM8E"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-WMR2ZZCM8E');
+    </script>
 </head>
 <body>
 
@@ -39,7 +49,7 @@
         <div class="column chosen-artifacts-box">
             <h3>Выбранные артефакты:</h3>
             <button id="clear-build"> Очистить сборку</button>
-			<div id="artifact-count">Количество артефактов: 0</div>
+            <div id="artifact-count">Количество артефактов: 0</div>
             <ul id="selected-artifacts" class="selected-artifacts-list"></ul>
         </div>
 
