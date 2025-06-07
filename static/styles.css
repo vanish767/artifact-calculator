@@ -230,3 +230,74 @@ h1, h3 {
         width: 100%;
     }
 }
+
+/* Общий стиль для всех кнопок */
+button {
+    padding: 10px 16px;
+    font-size: 14px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+/* Сохранить сборку — синяя кнопка */
+#save-build {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+#save-build:hover {
+    background-color: #0056b3;
+    border-color: #004a9f;
+}
+
+/* Загрузить сборку — зелёная кнопка */
+#load-build {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+#load-build:hover {
+    background-color: #1e7e34;
+    border-color: #1c7430;
+}
+
+/* Кнопка "Выбрать артефакт" — серый стиль */
+#confirm-artifact {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+#confirm-artifact:disabled {
+    background-color: #c0c0c0;
+    border-color: #c0c0c0;
+    cursor: not-allowed;
+    color: #eee;
+}
+
+#confirm-artifact:hover:not(:disabled) {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* Очистить сборку — ярко-красная кнопка */
+#clear-build {
+    padding: 10px 16px;
+    background-color: #dc3545;
+    border: 2px solid #dc3545;
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+#clear-build:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
