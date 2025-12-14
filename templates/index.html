@@ -1,71 +1,50 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Калькулятор Артов</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WMR2ZZCM8E"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-WMR2ZZCM8E');
-    </script>
+  <meta charset="UTF-8">
+  <title>Переехал</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f0f0f;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: center;
+    }
+    .box {
+      max-width: 600px;
+      padding: 24px;
+    }
+    h1 {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    a {
+      color: #4da3ff;
+      font-size: 18px;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-
-    <!-- Кнопка "Автор" в правом верхнем углу -->
-    <a href="https://vk.com/est_sho" target="_blank" id="author-button">Автор</a>
-
-    <h1>Калькулятор Артефактов</h1>
-    <div class="container">
-        <!-- Кнопки управления сборками (сохранить, загрузить, удалить) -->
-        <div class="controls" style="position: absolute; top: 10px; left: 10px;">
-            <button id="save-build">Сохранить сборку</button>
-            <button id="load-build">Загрузить сборку</button>
-        </div>
-
-        <!-- Выбор артефакта -->
-        <div class="column artifact-selection">
-            <h3>Выбор артефакта</h3>
-            <select id="artifact-select">
-                <option value="">Выберите артефакт</option>
-                {% for artifact in artifacts %}
-                    {% set variant = artifact['Варианты'][0] %}
-                    <option value="{{ artifact['Имя'] }}"
-                        title="{% for key, value in variant.items() if key not in ['Имя', 'Тир'] %}{{ key }}: {{ value }}{% if not loop.last %}, {% endif %}{% endfor %}">
-                        {{ artifact['Имя'] }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button id="confirm-artifact" disabled>Выбрать артефакт</button>
-        </div>
-
-        <!-- Выбранные артефакты -->
-        <div class="column chosen-artifacts-box">
-            <h3>Выбранные артефакты:</h3>
-            <button id="clear-build"> Очистить сборку</button>
-            <div id="artifact-count">Количество артефактов: 0</div>
-            <ul id="selected-artifacts" class="selected-artifacts-list"></ul>
-        </div>
-
-        <!-- Выбор тира и характеристики -->
-        <div class="column artifact-details">
-            <h3 id="artifact-name">Выберите артефакт из списка</h3>
-            <div id="tier-selection">Здесь появится выбор тира...</div>
-            <div id="artifact-stats">Характеристики появятся после выбора тира...</div>
-        </div>
-
-        <!-- Итоговые характеристики -->
-        <div class="column results">
-            <h3>Результаты:</h3>
-            <div id="calculation-result">Здесь появятся результаты...</div>
-        </div>
-    </div>
-
+  <div class="box">
+    <h1>Переехал</h1>
+    <p>
+      Актуальная версия сайта здесь:
+      <br>
+      <a href="https://vanish7667.github.io/groteskwiki/index.html">
+        https://vanish7667.github.io/groteskwiki/index.html
+      </a>
+    </p>
+  </div>
 </body>
 </html>
